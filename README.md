@@ -1,42 +1,101 @@
 # Imbalanced Learning in Binary Classification
-Imbalanced Learning Project
 
-applied to the case of frauduelnt credit card transactions. dataset available at https://www.kaggle.com/mlg-ulb/creditcardfraud
+# Motivation
 
-focal loss function modified from https://github.com/Tony607/Focal_Loss_Keras/
+Imbalanced data refers to a data which has large class imbalances. This is not a problem in itself. If missclassification costs are equal across classes, and the true population is reflected in the sample population there is no problem. However if either of these does not hold, it is desirable to modify our approach.
 
-#project :
+Imbalanced Learning, then, refers to methods which try to accomodate the cases when both those requirements do not hold. In essence, these methods devise ways of modifying learning costs to better reflect the real-world costs.
 
-### Imbalanced Learning
+Consider the case of credit card fraud. Fraud is extremely rare, but can be very costly. One fraudulent transaction can mean a loss of thousands of dollars for the company. Without imbalanced learning though, this fact is not internalized into the classification model. One missclassified transaction out of thousands is still a near-100% accuracy.
 
-Imbalanced data involves cases where the different classes in your dataset are not balanced. In some circumcstances this is not a problem, for example when the sample accurately represents the true popoulation. However there are specific cases where it presents a problem, in particular when it is important to accurately classify an underrepresented class. In general this is important when the cost of missclassification is high, e.g. when the true population is more balanced than the sample. Also, as in our case, detecting fraud. While fraudulent transactions are rare, they are costly when they go undetected, because credit card companies must reimburse the customer for the fraudulent spending.
+We compare several common approaches to mitigating the problems of imbalanced data, which can be cateforized into two types: modification to the loss function and modification to the sample. Both these approaches, in effect aim to increase the relative weight of missclassified samples in the minority class. We also investigate an approach which is specific to our application: considering the direct monetary cost of missclassification.
 
-Imbalanced learning, then, involves techniques which are focused on overcoming the problems of imbalanced data, and accurately predicting to minimize the costs of misclassification in the true population. We examine several techniques, which can fall into two main types:
 
-not that imbalanced learning only refers to the case of labeled data.
-We apply the following methods to a convolution neural network. Focal Loss specifically is a loss function which is designed for convolution neural networks. While other methods we use are more flexible in application, we focus on the use with convolution neural networks in order to better evaluate th results.
+ We evaluate these methods in the application to credit card fraud detection, using the dataset available at https://www.kaggle.com/mlg-ulb/creditcardfraud.
 
-### Sampling
+
+#Model
+
+We evaluate the following methods on a convultion neural network model. The CNN model was chosen for evaluation, primarily because Focal Loss is designed for this model. 
+
+
+#### Loss-Based Methods
+* Focal Loss
+* Cross Entropy loss (baseline)
+* Balanced Cross Entropy (class weights, we use inverse class frequency)
+* Cross Entropy with Monetary Weights
+* Focal Loss with Monetary Weights
+* Asymmetric Loss for Cross Entropy
+
+#### Sampling-Based Methods
 * SMOTE (oversampling)
 * NearMiss (undersampling)
 
-### Loss Functions
-* focal loss
-* Balanced Cross Entropy (class weights, we use inverse class frequency)
-* Asymmetric Loss for Cross Entropy
-* Cross Entropy loss (control)
+First, we provide an overview of each method and why it is useful for imbalanced data. Second, we explain which metrics we used to compare the methods. Finally, we give a recommendation.
 
 
+## Focal Loss
+ Focal Loss, recently designed by Facebook Research, is an extension of Cross Entrop Loss for Convolution Neural Networks. Focal Loss updates sample weights at the end of each epoch, lowering weight on samples which were classified successfully and increasing weight on those which were missclassified. 
+ This loss approach was designed for use in Object Detection for Computer Vision.
+ 
+## Cross Entropy loss (baseline)
 
-### Balanced Cross Entropy
+## Balanced Cross Entropy
 
-provide class weights, so that misclassification and classification of one class is more important than the other.
 
-### Asymmetric Cross Entropy
+## Asymmetric Cross Entropy
 
 similar to balanced cross entropy but finer details. Asymmetric Loss refers to a class of loss functions where loss is calculated differently based on both the class as well as the correct vs incorrect classification. In cases where costs are unique, this can be easily reflected in the loss function. In our case, since costs are associated more with missclassification of fraud as real, this has higher weight than the others.
 
 In essence, imbalanced learning involves accomodating different costs of misclassification. Since these costs are context specific, we also investigate approaches specific to our domain of application. Specifically we use two asymmetric loss functions: one which weights Type II error higher , and one which uses the amount in the transaction as a weight for the Type II error cost.
+
+
+## Balanced Cross Entropy 
+
+(class weights, we use inverse class frequency)
+
+provide class weights, so that misclassification and classification of one class is more important than the other.
+
+
+## Asymmetric Loss for Cross Entropy
+
+
+## Cross Entropy with Monetary Weights
+
+## Focal Loss with Monetary Weights
+
+
+
+
+## SMOTE
+SMOTE or Synthetic Minority Over-Sampling Technique, is an extension to oversampling. Where oversampling imputes repeats of existing observations, SMOTE generates new observations. These observations are generated using K-nearest neighbors. First, a K-mean is generated from some n observations from the minority class. Second, the closest point to the mean is calculated, and a new observation is randomly imputed somewhere on the line between the mean and the true observation.
+
+This technique is repeated so "synthesize" the desired number of minority-class samples, so that the data is more balanced.
+ 
+## Near Miss
+
+The NearMiss is an under-sampling technique which uses distance to eliminate majority class  samples.
+
+The NearMiss method corresponds to the NearMiss function in the Python library, and here are several versions of applying NearMiss Algorithm:
+
+NearMiss-1: Select samples of the majority class for which average distances to the k closest instances of the minority class is smallest
+
+NearMiss-2: Select samples of the majority class for which average distances to the k farthest instances of the minority class is smallest.
+
+NearMiss-3: This is a two-stage algorithm. First, for each minority sample, retain their M nearest-neighbors samples; then, those majority samples with the largest average distance to N nearest-neighbors samples will be selected.
+
+#Evaluation
+
+Imbalanced learning can be motivated by various reasons.
+
+In evaluating and comparing the models there are two approaches to consider. 
+* model-based
+* applied
+
+In the model-based approach, we are solely concerned with the efficicacy of our methods on imbalanced datasets. 
+
+In the applied approach, we specifically focus on the case of fraud detection and the impact it would have on the credit card company.
+## Metrics
 
 
 
