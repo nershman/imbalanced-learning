@@ -105,7 +105,7 @@ In the model based evaluation, we focus on speed, convergence of the algorithms,
 * Speed & Convergence Rate
 
 #####Speed
-[!speed](pics/speed.png)
+![speed](pics/speed.png)
 
 ##### Focal Loss
 ##### Cross Entropy loss (baseline)
