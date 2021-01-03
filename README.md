@@ -95,19 +95,36 @@ This method increases the speed of training, since the training set is made smal
  * model based
  * application based 
 
-In the first section we are concerned primarily with general model performance: speed and effectiveness in classifying our minority class. In the second section we focus on the application to credit card fraud, emphasizing the monetary cost and the impact of false-negatives.
+In the model based evaluation, we focus on speed, convergence of the algorithms, and classification effectiveness for the minority class. In the applied evaluation, we consider the total monetar losses due to false negatives, and overall performance.
+
 
 ### Model Based
 #### Metrics
 * AUC
-*
-*
+* Precision & Recall
+* Speed & Convergence Rate
+
+#####Speed
+[!speed](pics/speed.png)
+
+##### Focal Loss
+##### Cross Entropy loss (baseline)
+##### Balanced Cross Entropy (class weights, we use inverse class frequency)
+##### Cross Entropy with Monetary Weights
+##### Focal Loss with Monetary Weights
+##### Asymmetric Loss for Cross Entropy
+##### SMOTE (oversampling)
+##### NearMiss (undersampling)
+
 
 #### Recommendations
 
 ###Application Based
 ####Metrics
+* monetary loss
 *
 *
-*
+
+##### Monetary Loss
+
 #### Recommendations
