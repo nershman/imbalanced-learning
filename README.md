@@ -15,7 +15,7 @@ We compare several common approaches to mitigating the problems of imbalanced da
  We evaluate these methods in the application to credit card fraud detection, using the dataset available at https://www.kaggle.com/mlg-ulb/creditcardfraud.
 
 
-##Model
+## Model
 
 We evaluate the following methods on a convultion neural network model. The CNN model was chosen for evaluation, primarily because Focal Loss is designed for this model. 
 
@@ -62,7 +62,7 @@ provide class weights, so that misclassification and classification of one class
 
   In some applications costs of misclassification may differ. In our case of email fraud this is readily apparent: misclassifying an transation as fraud causes some transactional costs and inconvenience to the consumer, but misclassifying a fraudulent transaction as real can cost the consumer or the credit card company thousands of dollars. For this reason, it seems prurient to consider a case where the amount is a function of our missclassification cost.
  
-  $ E[classify as fraud | not fraud ] < $$ E[classify as real | fraud] $
+  $$ E[classify as fraud | not fraud ] < $$ E[classify as real | fraud] $$
 ### Cross Entropy with Monetary Weights
 
 ### Focal Loss with Monetary Weights
@@ -105,9 +105,18 @@ In the model based evaluation, we focus on speed, convergence of the algorithms,
 * Speed & Convergence Rate
 
 
-##### AUC
+##### AUC (Aread Under Curve)
+
+description of AUC and why its useful
+
+##### Precision & Recall
+
+descrip + why useful
 
 #####Speed & Convergence
+
+desc and why useful
+
 ![speed](pics/speed.png)
 
 ![convergence]() NEED TO ADD PICTURE
@@ -131,13 +140,13 @@ In the model based evaluation, we focus on speed, convergence of the algorithms,
 * false negatives & false positives
 
 ##### Monetary Loss
-* focal: 8481.850000000002
-*baseline: 13725.74000000000
-*near: miss 1757.8400000000001
-*smote: 5136.16
-*asym:  5148.31
-*m weight: 7634.910000000001
-*Focal with Weights: 13725.740000000005
+* Focal Loss: 8481.850000000002
+* Cross Entropy (baseline): 13725.74000000000
+* Near Miss: miss 1757.8400000000001
+* SMOTE: 5136.16
+* Asymmetric Loss:  5148.31
+* Monetary Weights: 7634.910000000001
+* Focal with Weights: 13725.740000000005
 
 ##### False Negatives & False Positives
 ![convfoc](pics/convolution/foc.png)
