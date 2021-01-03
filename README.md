@@ -98,14 +98,20 @@ This method increases the speed of training, since the training set is made smal
 In the model based evaluation, we focus on speed, convergence of the algorithms, and classification effectiveness for the minority class. In the applied evaluation, we consider the total monetar losses due to false negatives, and overall performance.
 
 
-### Model Based
+### Model Based Evaluation
 #### Metrics
 * AUC
 * Precision & Recall
 * Speed & Convergence Rate
 
-#####Speed
+
+##### AUC
+
+#####Speed & Convergence
 ![speed](pics/speed.png)
+
+![convergence]() NEED TO ADD PICTURE
+
 
 ##### Focal Loss
 ##### Cross Entropy loss (baseline)
@@ -119,12 +125,27 @@ In the model based evaluation, we focus on speed, convergence of the algorithms,
 
 #### Recommendations
 
-###Application Based
-####Metrics
-* monetary loss
-*
-*
+### Application Based Evaluation
+#### Metrics
+* monetary losses
+* false negatives & false positives
 
 ##### Monetary Loss
+* focal: 8481.850000000002
+*baseline: 13725.74000000000
+*near: miss 1757.8400000000001
+*smote: 5136.16
+*asym:  5148.31
+*m weight: 7634.910000000001
+*Focal with Weights: 13725.740000000005
+
+##### False Negatives & False Positives
+![convfoc](pics/convolution/foc.png)
+![convfoc](pics/convolution/ce.png)
+![convfoc](pics/convolution/nm.png)
+![convfoc](pics/convolution/smote.png)
+![convfoc](pics/convolution/asym.png)
+![convfoc](pics/convolution/weight.png)
+![convfoc](pics/convolution/fweight.png)
 
 #### Recommendations
