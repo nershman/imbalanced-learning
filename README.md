@@ -31,11 +31,10 @@ mod_focal.add(Dense(8, activation='relu', name='fc2'))
 mod_focal.add(Dense(nb_classes, activation='softmax', name='output'))
 ```
 
-
-We evaluate the following methods on a convultion neural network model. The CNN model was chosen for evaluation, primarily because Focal Loss is designed for this model. 
+We evaluate the following methods on a convolution neural network model. The CNN model was chosen for evaluation, primarily because Focal Loss is designed for this model. 
 
 ##### Loss-Based Methods
-* Focal Loss (#focal-loss)
+* Focal Loss
 * Cross Entropy loss (baseline)
 * Cross Entropy with Monetary Weights
 * Focal Loss with Monetary Weights
@@ -49,10 +48,12 @@ First, we provide an overview of each method and why it is useful for imbalanced
 
 
 ### Focal Loss
- Focal Loss, recently designed by Facebook Research, is an extension of Cross Entrop Loss for Convolution Neural Networks. Focal Loss updates sample weights at the end of each epoch, lowering weight on samples which were classified successfully and increasing weight on those which were missclassified. 
+ Focal Loss, recently designed by Facebook Research, is an extension of Cross Entropy Loss for Convolution Neural Networks. Focal Loss updates sample weights at the end of each epoch, lowering weight on samples which were classified successfully and increasing weight on those which were missclassified. Effectively, the model is then trained more on difficult-to classify observations. This is beneficial in the context of imbalanced data, because often due to the imbalance, the minority class is difficult to classify. Additionally, this approach adds emphasis to the minority class while maintaining the accuracy in the majority class, which is more difficult with other methods.
+ 
  This loss approach was designed for use in Object Detection for Computer Vision.
  Another benefit of this model is that it can effectively train faster by skipping overrepresented data.
-### Cross Entropy loss (baseline)
+ 
+### Cross Entropy Loss (baseline)
 
 Cross Entropy is a common loss measure for classification in the case of rare events.  It is calculated by generating two distributions: one from the true labels and one from the predicted labels. Kullback-Leibler divergence is used to measure the difference between the two distributions.
 
@@ -61,10 +62,8 @@ Theoretically, Cross Entropy loss should converge faster than MSE in gradient de
 ### Asymmetric Loss
 
 Asymmetric Loss refers to a class of loss functions where loss is calculated differently based on both the class as well as the correct vs incorrect classification. In cases where costs are unique, this can be easily reflected in the loss function. In our case, since costs are associated more with missclassification of fraud as real, this has higher weight than the others.
-
-In some applications costs of misclassification may differ. In our case of email fraud this is readily apparent: misclassifying a transation as fraud causes some transactional costs and inconvenience to the consumer, but misclassifying a fraudulent transaction as real can cost the credit card company thousands of dollars. We use an asymmetric loss function where false negatives are weighted more than false positives to reflect this real world cost.
  
-E[classify as fraud | not fraud ] <  E[classify as real | fraud]
+E[cost for classifying as fraud | not fraud ] >  E[cost for classify as real | fraud]
 
 We assign loss for false negatives to be 4 times higher than the other classifications.
 
@@ -115,35 +114,34 @@ Here are the final results of our models on the test set:
  * model based
  * application based 
 
-In the model based evaluation, we focus on speed, convergence of the algorithms, and classification effectiveness for the minority class. In the applied evaluation, we consider the total monetar losses due to false negatives, and overall performance.
+In the model based evaluation, we focus on speed, convergence of the algorithms, and classification effectiveness for the minority class. In the applied evaluation, we consider the total monetary losses due to false negatives, and overall performance.
 
+Since we have an extremely imbalanced data, accuracy is no longer a helpful metric for evaluating the model (it might get a high accuracy by predicting Negative all the time). Here, we use Precision-Recall (model case) and AUC (applied case) as the evaluation metrics, which are not sensitive to imbalanced data.
 
 ### Model Based Evaluation
 #### Metrics
 * Precision & Recall
 * Speed & Convergence Rate
 
-Since we have an extremely imbalanced data, accuracy is no longer a helpful metric for evaluating the model (it might get a high accuracy by predicting Negative all the time). Here, we use Precision-Recall (model case) and AUC (applied case) as the evaluation metrics, which are not sensitive to imbalanced data.
-
 ##### Precision & Recall
 
 In Precision-Recall curve, the precision (y-axis) is plotted against the recall (x-axis). These quantities are defined as follows
 
-Precision= ![equation](pics/tex/prec.gif) is the proportion of positives which were correct, out of all values predicted as positive. Precision is an important metric in the context of fraud detection because low precision will increase 
+Precision= ![equation](pics/tex/prec.gif) is the proportion of positives which were correct, out of all values predicted as positive. Precision is an important metric in the context of fraud detection because low precision will decreases the reliability of the prediction.
 
-Recall=TPR= ![equation](pics/tex/recall.gif)
+Recall=TPR= ![equation](pics/tex/recall.gif) is the proportion of positives which were correctly classified.
 
-In general, the reliability of a classification. This plot emphasizes the trade-off between trustowrthiness of positive classification (Precision) and the amount of true positives which were correctly identified.
+This plot emphasizes the trade-off between trustworthiness of positive classification (Precision) and the amount of true positives which were correctly identified.
 
 As an example to illustrate how this can be important, consider e-mail spam: there is a trade off between precision and TPR. WIth a high TPR, all spam is correctly identified, but if the precision is low then the user will often be retrieving emails from the spam folder. This defeats the purpose of the classifier, since the user has to manually decide anyways.
 
 ![prcurve](pics/convolution/prcurve.png)
 
-We observe that Focal Loss, Asymmetric Loss and SMOTE all perform best, becayse they have the smallest tradeoff between precision and recall, maintaining high precision until around 0.8 recall. Near Miss and monetary weights performs the worst in precision. 
+We observe that Focal Loss, Asymmetric Loss and SMOTE all perform best, because they have the smallest tradeoff between precision and recall, maintaining high precision until around 0.8 recall. Near Miss and monetary weights perform the worst in precision. 
 
 ##### Speed
 
-When choosing a model, the speed of the algorithm is important for real applications. Convergence of the algorithm is also important for trustworthy results.
+When choosing a model, the speed of the algorithm is important for real-world applications. Convergence of the algorithm is also important for reliable results.
 
 
 ![speed](pics/speed.png)
@@ -153,9 +151,12 @@ We observe that SMOTE performs the worst and Near Miss performs the best in term
 ##### Convergence
 
 ![convergence](pics/ep_rec/foc.png)
+
+In the 40 epochs we ran, focal loss does not seem to converge, and recall does not increase much. There does seem to be a noisy but constant increase in recall, as loss decreases.
 ![convergence](pics/ep_rec/ce.png)
 ![convergence](pics/ep_rec/nm.png)
 ![convergence](pics/ep_rec/smote.png)
+Near Miss seems to converge quite fast, and SMOTE is close to converging as well.
 ![convergence](pics/ep_rec/asym.png)
 
 It takes many epochs, but eventually the converges to a very high recall rate when using asymmetric loss.
@@ -165,12 +166,14 @@ It takes many epochs, but eventually the converges to a very high recall rate wh
 
 Focal with monetary weights converges faster and has higher recall on the train set than without.
 
-When comparing the rates, we put loss functions that use monetary weights on a separate graph. This is because their losses are calculated using their weights, which make their size quite different. 
-
 ![convergence](pics/ep_rec/1.png)
+
+When comparing the rates of convergence, we put loss functions that use monetary weights on a separate graph. This is because their losses are calculated using their weights, which make their size quite different. We can see that Focal performs much better than the baseline Cross Entropy, when using monetary weights.
+
 ![convergence](pics/ep_rec/2.png)
 ![convergence](pics/ep_rec/3.png)
 
+We observe that Assymmetric Loss reaches the higher recall, however this convergence was very unreliabl and happened suddenly at around 30 epochs.
 
 #### Recommendations
 
@@ -189,7 +192,7 @@ Focal loss did not perform as well as expected. This is likely because our appli
 
 We use the area under curve to examine the performance of our models in the general case. The AUC plots the True Positive Rate and False Positive Rate, determining their relationship. The ideal model will be a constant of TPR = 1, for all FPR.
 
-TPR = Recall = ![equation](pics/tex/recall.gif) is the proportion of positives which were correctly classified.
+TPR = Recall = ![equation](pics/tex/recall.gif)
 
 FPR = ![equation](pics/tex/fpr.gif) is the proportion of negatives which were incorrectly classified as positive.
 
@@ -210,6 +213,9 @@ Focal Loss with Monetary Weights performs very poorly, worse than random binary 
 Asymmetric Loss and SMOTE perform the best, especially for very low false positive rates. At an FPR above 0.6, NearMiss performs slightly better than SMOTE, since it has a higher TPR for FPR > 0.6. Overall, Asymmetric Loss performs the best at maximizing AUC.
 
 ##### Monetary Loss
+
+In order to calculate monetary loss, we sum the corresponding Amounts of transactions which were falsely categorized on not fraud. This is the amount of money the credit card company would have to reimburse customers.
+
 * Focal Loss: 8481.850000000002
 * Cross Entropy (baseline): 13725.74000000000
 * Near Miss: 1757.8400000000001
@@ -222,4 +228,4 @@ Based solely on monetary loss, Near Miss performs the best.
 
 #### Recommendations
 
-Overall, Asymmetric Loss is recommended due to its relatively good performance monetarily, while also performing well in TPR and FPR. Near Miss would also be useful, as it is very fast and so will perform well at scale, but the false positive rate is not ideal, which we can see from the AUC graph as well as the convolution matrix, where there are more false positives than true negatives. To categorize so many transactions as fraud will inconvenience consumers severely, resulting in a loss in business.
+Overall, Asymmetric Loss is recommended due to its relatively good performance monetarily, while also performing well in TPR and FPR. Near Miss would also be useful, as it is very fast and so will perform well at scale, but the false positive rate is very extreme, which we can see from the AUC graph as well as the convolution matrix, where there are more false positives than true negatives. To categorize so many transactions as fraud will inconvenience consumers severely, resulting in a loss in business.
