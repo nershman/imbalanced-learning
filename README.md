@@ -139,6 +139,8 @@ As an example to illustrate how this can be important, consider e-mail spam: the
 
 We observe that Focal Loss, Asymmetric Loss and SMOTE all perform best, because they have the smallest tradeoff between precision and recall, maintaining high precision until around 0.8 recall. Near Miss and monetary weights perform the worst in precision. 
 
+Focal Loss underperforms slightly due to the high false negative rate. It would be interesting to run the experiment again with more epochs and compare the results. It should be noted from the correlation plots that focal loss has the smallest number of false positives among models which report non-zero number of true negatives. 
+
 ##### Speed
 
 When choosing a model, the speed of the algorithm is important for real-world applications. Convergence of the algorithm is also important for reliable results.
