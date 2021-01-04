@@ -24,10 +24,12 @@ We compare several common approaches to mitigating the problems of imbalanced da
 
 We use the following CNN model
 
-`mod_focal.add(Dense(10, input_dim=input_dim, activation='relu', name='input'))
+```
+mod_focal.add(Dense(10, input_dim=input_dim, activation='relu', name='input'))
 mod_focal.add(Dense(25, activation='relu', name='fc1'))
 mod_focal.add(Dense(8, activation='relu', name='fc2'))
-mod_focal.add(Dense(nb_classes, activation='softmax', name='output'))`
+mod_focal.add(Dense(nb_classes, activation='softmax', name='output'))
+```
 
 
 We evaluate the following methods on a convultion neural network model. The CNN model was chosen for evaluation, primarily because Focal Loss is designed for this model. 
