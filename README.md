@@ -116,30 +116,36 @@ Here are the final results of our models on the test set:
 
 In the model based evaluation, we focus on speed, convergence of the algorithms, and classification effectiveness for the minority class. In the applied evaluation, we consider the total monetary losses due to false negatives, and overall performance.
 
-Since we have an extremely imbalanced data, accuracy is no longer a helpful metric for evaluating the model (it might get a high accuracy by predicting Negative all the time). Here, we use Precision-Recall (model case) and AUC (applied case) as the evaluation metrics, which are not sensitive to imbalanced data.
+Since we have an extremely imbalanced data, accuracy is no longer a helpful metric for evaluating the model (it might get a high accuracy by predicting Negative all the time). Here, we use Precision-Recall (applied case) and AUC (model case) as the evaluation metrics, which are not sensitive to imbalanced data.
 
 ### Model Based Evaluation
 #### Metrics
-* Precision & Recall
+* ROC-AUC
 * Speed & Convergence Rate
 
-##### Precision & Recall
+##### ROC-AUC ( Receiver Operating Characteristicss Aread Under Curve)
 
-In Precision-Recall curve, the precision (y-axis) is plotted against the recall (x-axis). These quantities are defined as follows
+We use the area under Receiver Operating Characteristics curve to examine the performance of our models in the general case. The AUC plots the True Positive Rate and False Positive Rate, determining their relationship. The ideal model will be a constant of TPR = 1, for all FPR.
 
-Precision= ![equation](pics/tex/prec.gif) is the proportion of positives which were correct, out of all values predicted as positive. Precision is an important metric in the context of fraud detection because low precision will decreases the reliability of the prediction.
+TPR = Recall = ![equation](pics/tex/recall.gif) is the proportion of positives which were correctly classified.
 
-Recall=TPR= ![equation](pics/tex/recall.gif) is the proportion of positives which were correctly classified.
+FPR = ![equation](pics/tex/fpr.gif) is the proportion of negatives which were incorrectly classified as positive.
 
-This plot emphasizes the trade-off between trustworthiness of positive classification (Precision) and the amount of true positives which were correctly identified.
+The ROC curve is used in evaluation for other the general context because it places less context on the minority, allowing an evaluation which is more about overall performance.
 
-As an example to illustrate how this can be important, consider e-mail spam: there is a trade off between precision and TPR. WIth a high TPR, all spam is correctly identified, but if the precision is low then the user will often be retrieving emails from the spam folder. This defeats the purpose of the classifier, since the user has to manually decide anyways.
+![auc](pics/convolution/auc.png)
 
-![prcurve](pics/convolution/prcurve.png)
+* Focal Loss      : 0.9027227485158519
+* Baseline (CE)   : 0.8925670834912214
+* Asymmetric Loss : 0.9560992295061261
+* Monetary Weights: 0.5278074017936087
+* Focal w/ Weight : 0.13339416445623342
+* SMOTE           : 0.9382737905772388
+* NearMiss        : 0.8977279272451686
 
-We observe that Focal Loss, Asymmetric Loss and SMOTE all perform best, because they have the smallest tradeoff between precision and recall, maintaining high precision until around 0.8 recall. Near Miss and monetary weights perform the worst in precision. 
+Focal Loss with Monetary Weights performs very poorly, worse than random binary classification would (see white dotted line). Monetary weights also performs very poorly. This shows how our AUC model does not take into account the cost of different transactions. (In terms of monetary loss, we will show later that these two methods perform slightly better than their unweighted counterparts!)
 
-Focal Loss underperforms slightly due to the high false negative rate. It would be interesting to run the experiment again with more epochs and compare the results. It should be noted from the correlation plots that focal loss has the smallest number of false positives among models which report non-zero number of true negatives. 
+Asymmetric Loss and SMOTE perform the best, especially for very low false positive rates. At an FPR above 0.6, NearMiss performs slightly better than SMOTE, since it has a higher TPR for FPR > 0.6. Overall, Asymmetric Loss performs the best at maximizing AUC.
 
 ##### Speed
 
@@ -184,38 +190,28 @@ We observe that Assymmetric Loss reaches the higher recall, however this converg
 
 Overall, we recommend Asymmetric Loss. However, by observing the epoch plot, we can see that this loss does not converge reliably in recall. So for small epochs it may be unreliable as there is no constant rate of convergence. 
 
-Focal loss did not perform as well as expected. This is likely because our application is not as sophisticated as dense object detection, where focal loss may be relatively better than other methods. Focal loss converges slowly, but if we ran over more epoch it is possible we would get better performance as it was continuously imporving over each epoch. 
+Focal Loss did not perform as well as expected. This is likely because our application is not as sophisticated as dense object detection, where focal loss may be relatively better than other methods. Focal loss converges slowly, but if we ran over more epoch it is possible we would get better performance as it was continuously imporving over each epoch. 
 
 ### Application Based Evaluation
 #### Metrics
-* AUC
+* Precision & Recall
 * monetary losses
 
+##### Precision & Recall
 
+In Precision-Recall curve, the precision (y-axis) is plotted against the recall (x-axis). These quantities are defined as follows
 
-##### AUC (Aread Under Curve)
+Precision = ![equation](pics/tex/prec.gif) is the proportion of positives which were correct, out of all values predicted as positive. Precision is an important metric in the context of fraud detection because low precision will decreases the reliability of the prediction. Specifically in the context of credit card fraud, this means more labor costs for customer service agents to address rejected transactions.
 
-We use the area under curve to examine the performance of our models in the general case. The AUC plots the True Positive Rate and False Positive Rate, determining their relationship. The ideal model will be a constant of TPR = 1, for all FPR.
+Recall = TPR = ![equation](pics/tex/recall.gif) 
 
-TPR = Recall = ![equation](pics/tex/recall.gif)
+This plot emphasizes the trade-off between trustworthiness of positive classification (Precision) and the amount of true positives which were correctly identified. It places more emphasis on the minority class than the ROC curve.
 
-FPR = ![equation](pics/tex/fpr.gif) is the proportion of negatives which were incorrectly classified as positive.
+![prcurve](pics/convolution/prcurve.png)
 
-In the specific case of detecting fraudulent transactions, teh false positive rate is more interesting than the precision because false positives will require customer intervention with a phone call to reconcile. This means there will be higher labor costs to the company and possibly lower customer satisfaction.
+We observe that Focal Loss, Asymmetric Loss and SMOTE all perform best, because they have the smallest tradeoff between precision and recall, maintaining high precision until around 0.8 recall. Near Miss and monetary weights perform the worst in precision. 
 
-![auc](pics/convolution/auc.png)
-
-* Focal Loss      : 0.9027227485158519
-* Baseline (CE)   : 0.8925670834912214
-* Asymmetric Loss : 0.9560992295061261
-* Monetary Weights: 0.5278074017936087
-* Focal w/ Weight : 0.13339416445623342
-* SMOTE           : 0.9382737905772388
-* NearMiss        : 0.8977279272451686
-
-Focal Loss with Monetary Weights performs very poorly, worse than random binary classification would (see white dotted line). Monetary weights also performs very poorly. This shows how our AUC model does not take into account the cost of different transactions. In terms of monetary loss, we will show later that these two methods perform slightly better than their unweighted counterparts!
-
-Asymmetric Loss and SMOTE perform the best, especially for very low false positive rates. At an FPR above 0.6, NearMiss performs slightly better than SMOTE, since it has a higher TPR for FPR > 0.6. Overall, Asymmetric Loss performs the best at maximizing AUC.
+Focal Loss underperforms slightly due to the high false negative rate. It would be interesting to run the experiment again with more epochs and compare the results. It should be noted from the correlation plots that focal loss has the smallest number of false positives among models which report non-zero number of true negatives. 
 
 ##### Monetary Loss
 
@@ -233,4 +229,4 @@ Based solely on monetary loss, Near Miss performs the best.
 
 #### Recommendations
 
-Overall, Asymmetric Loss is recommended due to its relatively good performance monetarily, while also performing well in TPR and FPR. Near Miss would also be useful, as it is very fast and so will perform well at scale, but the false positive rate is very extreme, which we can see from the AUC graph as well as the convolution matrix, where there are more false positives than true negatives. To categorize so many transactions as fraud will inconvenience consumers severely, resulting in a loss in business.
+Overall, Asymmetric Loss is recommended due to its relatively good performance monetarily, while also performing well in TPR and FPR. Near Miss would also be useful, as it is very fast and so will perform well at scale, but the false positive rate is very extreme, which we can see from the P-R graph as well as the convolution matrix, where there are more false positives than true negatives. To categorize so many transactions as fraud will inconvenience consumers severely, resulting in a loss in business.
