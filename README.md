@@ -155,7 +155,7 @@ It takes many epochs, but eventually the converges to a very high recall rate wh
 
 Focal with monetary weights converges faster and has higher recall on the train set than without.
 
-When comparing the rates
+When comparing the rates, we put loss functions that use monetary weights on a separate graph. This is because their losses are calculated using their weights, which make their size quite different. 
 
 ![convergence](pics/ep_rec/1.png)
 ![convergence](pics/ep_rec/2.png)
@@ -164,7 +164,9 @@ When comparing the rates
 
 #### Recommendations
 
+Overall, we recommend Asymmetric Loss. However, by observing the epoch plot, we can see that this loss does not converge reliably in recall. So for small epochs it may be unreliable as there is no constant rate of convergence. 
 
+Focal loss did not perform as well as expected. This is likely because our application is not as sophisticated as dense object detection, where focal loss may be relatively better than other methods. Focal loss converges slowly, but if we ran over more epoch it is possible we would get better performance as it was continuously imporving over each epoch. 
 
 ### Application Based Evaluation
 #### Metrics
