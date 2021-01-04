@@ -164,10 +164,13 @@ When comparing the rates
 
 #### Recommendations
 
+
+
 ### Application Based Evaluation
 #### Metrics
-* monetary losses
 * AUC
+* monetary losses
+
 
 
 ##### AUC (Aread Under Curve)
@@ -178,12 +181,26 @@ TPR = Recall = ![equation](pics/tex/recall.gif) is the proportion of positives w
 
 FPR = ![equation](pics/tex/fpr.gif) is the proportion of negatives which were incorrectly classified as positive.
 
+In the specific case of detecting fraudulent transactions, teh false positive rate is more interesting than the precision because false positives will require customer intervention with a phone call to reconcile. This means there will be higher labor costs to the company and possibly lower customer satisfaction.
+
 ![auc](pics/convolution/auc.png)
+
+Focal Loss      : 0.9027227485158519
+Baseline (CE)   : 0.8925670834912214
+Asymmetric Loss : 0.9560992295061261
+Monetary Weights: 0.5278074017936087
+Focal w/ Weight : 0.13339416445623342
+SMOTE           : 0.9382737905772388
+NearMiss        : 0.8977279272451686
+
+Focal Loss with Monetary Weights performs very poorly, worse than random binary classification would (see white dotted line). Monetary weights also performs very poorly. This shows how our AUC model does not take into account the cost of different transactions. In terms of monetary loss, we will show later that these two methods perform slightly better than their unweighted counterparts!
+
+Asymmetric Loss and SMOTE perform the best, especially for very low false positive rates. At an FPR above 0.6, NearMiss performs slightly better than SMOTE, since it has a higher TPR for FPR > 0.6. Overall, Asymmetric Loss performs the best at maximizing AUC.
 
 ##### Monetary Loss
 * Focal Loss: 8481.850000000002
 * Cross Entropy (baseline): 13725.74000000000
-* Near Miss: miss 1757.8400000000001
+* Near Miss: 1757.8400000000001
 * SMOTE: 5136.16
 * Asymmetric Loss:  5148.31
 * Monetary Weights: 7634.910000000001
@@ -191,5 +208,6 @@ FPR = ![equation](pics/tex/fpr.gif) is the proportion of negatives which were in
 
 Based solely on monetary loss, Near Miss performs the best.
 
-
 #### Recommendations
+
+Overall, Asymmetric Loss is recommended due to its relatively good performance monetarily, while also performing well in TPR and FPR. Near Miss would also be useful, as it is very fast and so will perform well at scale, but the false positive rate is not ideal, which we can see from the AUC graph as well as the convolution matrix, where there are more false positives than true negatives. To categorize so many transactions as fraud will inconvenience consumers severely, resulting in a loss in business.
