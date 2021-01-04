@@ -187,13 +187,13 @@ In the specific case of detecting fraudulent transactions, teh false positive ra
 
 ![auc](pics/convolution/auc.png)
 
-Focal Loss      : 0.9027227485158519
-Baseline (CE)   : 0.8925670834912214
-Asymmetric Loss : 0.9560992295061261
-Monetary Weights: 0.5278074017936087
-Focal w/ Weight : 0.13339416445623342
-SMOTE           : 0.9382737905772388
-NearMiss        : 0.8977279272451686
+* Focal Loss      : 0.9027227485158519
+* Baseline (CE)   : 0.8925670834912214
+* Asymmetric Loss : 0.9560992295061261
+* Monetary Weights: 0.5278074017936087
+* Focal w/ Weight : 0.13339416445623342
+* SMOTE           : 0.9382737905772388
+* NearMiss        : 0.8977279272451686
 
 Focal Loss with Monetary Weights performs very poorly, worse than random binary classification would (see white dotted line). Monetary weights also performs very poorly. This shows how our AUC model does not take into account the cost of different transactions. In terms of monetary loss, we will show later that these two methods perform slightly better than their unweighted counterparts!
 
