@@ -90,6 +90,15 @@ This method increases the speed of training, since the training set is made smal
 
 ## Evaluation
 
+Here are the final results of our models:
+![convfoc](pics/convolution/foc.png)
+![convfoc](pics/convolution/ce.png)
+![convfoc](pics/convolution/nm.png)
+![convfoc](pics/convolution/smote.png)
+![convfoc](pics/convolution/asym.png)
+![convfoc](pics/convolution/weight.png)
+![convfoc](pics/convolution/fweight.png)
+
  We consider two different approaches in evaluating our models.
  * model based
  * application based 
@@ -99,49 +108,88 @@ In the model based evaluation, we focus on speed, convergence of the algorithms,
 
 ### Model Based Evaluation
 #### Metrics
-* AUC
 * Precision & Recall
 * Speed & Convergence Rate
 
-
-##### AUC (Aread Under Curve)
-
-description of AUC and why its useful
+Since we have an extremely imbalanced data, accuracy is no longer a helpful metric for evaluating the model (it might get a high accuracy by predicting Negative all the time). Here, we use Precision-Recall (model case) and AUC (applied case) as the evaluation metrics, which are not sensitive to imbalanced data.
 
 ##### Precision & Recall
 
-descrip + why useful
+In Precision-Recall curve, the precision (y-axis) is plotted against the recall (x-axis). These quantities are defined as follows
 
-![equation](pics/tex/prec.gif)
+Precision= ![equation](pics/tex/prec.gif) is the proportion of positives which were correct, out of all values predicted as positive. Precision is an important metric in the context of fraud detection because low precision will increase 
 
-![equation](pics/tex/recall.gif)
+Recall=TPR= ![equation](pics/tex/recall.gif)
 
-#####Speed & Convergence
+In general, the reliability of a classification. This plot emphasizes the trade-off between trustowrthiness of positive classification (Precision) and the amount of true positives which were correctly identified.
+
+As an example to illustrate how this can be important, consider e-mail spam: there is a trade off between precision and TPR. WIth a high TPR, all spam is correctly identified, but if the precision is low then the user will often be retrieving emails from the spam folder. This defeats the purpose of the classifier, since the user has to manually decide anyways.
+
+![prcurve](pics/prcurve.png)
+
+We observe that Focal Loss, Asymmetric Loss and SMOTE all perform best, becayse they have the smallest tradeoff between precision and recall, maintaining high precision until around 0.8 recall. Near Miss and monetary weights performs the worst in precision. 
+
+##### Speed
 
 When choosing a model, the speed of the algorithm is important for real applications. Convergence of the algorithm is also important for trustworthy results.
 
 
 ![speed](pics/speed.png)
 
-![convergence]() NEED TO ADD PICTURE
+We observe that SMOTE performs the worst and Near Miss performs the best in terms of speed. This is intuitive, as SMOTE enlarges the train set and Near Miss shrinks the train set. The other methods perform similiarly, and none of the methods seem to get faster or slower over more epoch. In our application of focal loss, we do not observe an increased speed over time for the method, however this may be due to insufficient epochs being run for the algorithm to converge.
+
+##### Convergence
+
+![convergence](pics/ep_rec/foc.png)
+![convergence](pics/ep_rec/ce.png)
+![convergence](pics/ep_rec/nm.png)
+![convergence](pics/ep_rec/smote.png)
+![convergence](pics/ep_rec/asym.png)
+![convergence](pics/ep_rec/monet.png)
+![convergence](pics/ep_rec/focweight.png)
 
 
-##### Focal Loss
-##### Cross Entropy loss (baseline)
-##### Balanced Cross Entropy (class weights, we use inverse class frequency)
-##### Cross Entropy with Monetary Weights
-##### Focal Loss with Monetary Weights
-##### Asymmetric Loss for Cross Entropy
-##### SMOTE (oversampling)
-##### NearMiss (undersampling)
+text
 
+![convergence](pics/ep_rec/1.png)
+![convergence](pics/ep_rec/2.png)
+![convergence](pics/ep_rec/3.png)
+
+text
+
+![convergence](pics/ep_prec/foc.png)
+![convergence](pics/ep_prec/ce.png)
+![convergence](pics/ep_prec/nm.png)
+![convergence](pics/ep_prec/smote.png)
+![convergence](pics/ep_prec/asym.png)
+![convergence](pics/ep_prec/monet.png)
+![convergence](pics/ep_prec/focweight.png)
+
+text
+
+![convergence](pics/ep_prec/1.png)
+![convergence](pics/ep_prec/2.png)
+![convergence](pics/ep_prec/3.png)
+
+text
 
 #### Recommendations
 
 ### Application Based Evaluation
 #### Metrics
 * monetary losses
+* AUC
 * false negatives & false positives
+
+
+##### AUC (Aread Under Curve)
+
+We use the area under curve to examine the performance of our models in the general case. The AUC plots the True Positive Rate and False Positive Rate, determining their relationship. The ideal model will be a constant of TPR = 1, for all FPR.
+
+TPR = Recall = ![equation](pics/tex/recall.gif) is the proportion of positives which were correctly classified.
+
+FPR = ![equation](pics/tex/fpr.gif) is the proportion of negatives which were incorrectly classified as positive.
+
 
 ##### Monetary Loss
 * Focal Loss: 8481.850000000002
@@ -153,12 +201,6 @@ When choosing a model, the speed of the algorithm is important for real applicat
 * Focal with Weights: 13725.740000000005
 
 ##### False Negatives & False Positives
-![convfoc](pics/convolution/foc.png)
-![convfoc](pics/convolution/ce.png)
-![convfoc](pics/convolution/nm.png)
-![convfoc](pics/convolution/smote.png)
-![convfoc](pics/convolution/asym.png)
-![convfoc](pics/convolution/weight.png)
-![convfoc](pics/convolution/fweight.png)
+
 
 #### Recommendations
