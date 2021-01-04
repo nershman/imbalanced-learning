@@ -153,10 +153,13 @@ We observe that SMOTE performs the worst and Near Miss performs the best in term
 ![convergence](pics/ep_rec/foc.png)
 
 In the 40 epochs we ran, focal loss does not seem to converge, and recall does not increase much. There does seem to be a noisy but constant increase in recall, as loss decreases.
+
 ![convergence](pics/ep_rec/ce.png)
 ![convergence](pics/ep_rec/nm.png)
 ![convergence](pics/ep_rec/smote.png)
+
 Near Miss seems to converge quite fast, and SMOTE is close to converging as well.
+
 ![convergence](pics/ep_rec/asym.png)
 
 It takes many epochs, but eventually the converges to a very high recall rate when using asymmetric loss.
