@@ -54,7 +54,7 @@ Asymmetric Loss refers to a class of loss functions where loss is calculated dif
 
 In some applications costs of misclassification may differ. In our case of email fraud this is readily apparent: misclassifying a transation as fraud causes some transactional costs and inconvenience to the consumer, but misclassifying a fraudulent transaction as real can cost the credit card company thousands of dollars. We use an asymmetric loss function where false negatives are weighted more than false positives to reflect this real world cost.
  
-E[classify as fraud | not fraud ] < $$ E[classify as real | fraud]
+E[classify as fraud | not fraud ] <  E[classify as real | fraud]
 
 We assign loss for false negatives to be 4 times higher than the other classifications.
 
@@ -90,7 +90,9 @@ This method increases the speed of training, since the training set is made smal
 
 ## Evaluation
 
-Here are the final results of our models:
+Here are the final results of our models on the test set:
+
+
 ![convfoc](pics/convolution/foc.png)
 ![convfoc](pics/convolution/ce.png)
 ![convfoc](pics/convolution/nm.png)
@@ -125,7 +127,7 @@ In general, the reliability of a classification. This plot emphasizes the trade-
 
 As an example to illustrate how this can be important, consider e-mail spam: there is a trade off between precision and TPR. WIth a high TPR, all spam is correctly identified, but if the precision is low then the user will often be retrieving emails from the spam folder. This defeats the purpose of the classifier, since the user has to manually decide anyways.
 
-![prcurve](pics/prcurve.png)
+![prcurve](pics/convolution/prcurve.png)
 
 We observe that Focal Loss, Asymmetric Loss and SMOTE all perform best, becayse they have the smallest tradeoff between precision and recall, maintaining high precision until around 0.8 recall. Near Miss and monetary weights performs the worst in precision. 
 
@@ -145,33 +147,20 @@ We observe that SMOTE performs the worst and Near Miss performs the best in term
 ![convergence](pics/ep_rec/nm.png)
 ![convergence](pics/ep_rec/smote.png)
 ![convergence](pics/ep_rec/asym.png)
+
+It takes many epochs, but eventually the converges to a very high recall rate when using asymmetric loss.
+
 ![convergence](pics/ep_rec/monet.png)
 ![convergence](pics/ep_rec/focweight.png)
 
+Focal with monetary weights converges faster and has higher recall on the train set than without.
 
-text
+When comparing the rates
 
 ![convergence](pics/ep_rec/1.png)
 ![convergence](pics/ep_rec/2.png)
 ![convergence](pics/ep_rec/3.png)
 
-text
-
-![convergence](pics/ep_prec/foc.png)
-![convergence](pics/ep_prec/ce.png)
-![convergence](pics/ep_prec/nm.png)
-![convergence](pics/ep_prec/smote.png)
-![convergence](pics/ep_prec/asym.png)
-![convergence](pics/ep_prec/monet.png)
-![convergence](pics/ep_prec/focweight.png)
-
-text
-
-![convergence](pics/ep_prec/1.png)
-![convergence](pics/ep_prec/2.png)
-![convergence](pics/ep_prec/3.png)
-
-text
 
 #### Recommendations
 
@@ -179,7 +168,6 @@ text
 #### Metrics
 * monetary losses
 * AUC
-* false negatives & false positives
 
 
 ##### AUC (Aread Under Curve)
@@ -190,6 +178,7 @@ TPR = Recall = ![equation](pics/tex/recall.gif) is the proportion of positives w
 
 FPR = ![equation](pics/tex/fpr.gif) is the proportion of negatives which were incorrectly classified as positive.
 
+![auc](pics/convolution/auc.png)
 
 ##### Monetary Loss
 * Focal Loss: 8481.850000000002
@@ -200,7 +189,7 @@ FPR = ![equation](pics/tex/fpr.gif) is the proportion of negatives which were in
 * Monetary Weights: 7634.910000000001
 * Focal with Weights: 13725.740000000005
 
-##### False Negatives & False Positives
+Based solely on monetary loss, Near Miss performs the best.
 
 
 #### Recommendations
