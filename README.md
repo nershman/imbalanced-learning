@@ -12,22 +12,26 @@ Consider the case of credit card fraud. Fraud is extremely rare, but can be very
 We compare several common approaches to mitigating the problems of imbalanced data, which can be categorized into two types: modification to the loss function and modification to the sample. Both these approaches, in effect aim to increase the relative weight of missclassified samples in the minority class. We also investigate an approach which is specific to our application: considering the direct monetary cost of missclassification.
 
 
- We evaluate these methods in the application to credit card fraud detection, using the dataset available at https://www.kaggle.com/mlg-ulb/creditcardfraud.
+ We evaluate these methods in the application to credit card fraud detection, using the dataset available at https://www.kaggle.com/mlg-ulb/creditcardfraud. We can see clearly that our dataset is extremely imbalanced. 
+ 
+ `df['isFraud'].value_counts()`
+ 0   | 284315
+ :-: | :-:
+ 1   | 492
 
 
 ## Model
 
 We evaluate the following methods on a convultion neural network model. The CNN model was chosen for evaluation, primarily because Focal Loss is designed for this model. 
 
-#### Loss-Based Methods
-* Focal Loss (#focalloss)
+##### Loss-Based Methods
+* Focal Loss (#focal-loss)
 * Cross Entropy loss (baseline)
-* Balanced Cross Entropy (class weights, we use inverse class frequency)
 * Cross Entropy with Monetary Weights
 * Focal Loss with Monetary Weights
 * Asymmetric Loss for Cross Entropy
 
-#### Sampling-Based Methods
+##### Sampling-Based Methods
 * SMOTE (oversampling)
 * NearMiss (undersampling)
 
@@ -39,33 +43,28 @@ First, we provide an overview of each method and why it is useful for imbalanced
  This loss approach was designed for use in Object Detection for Computer Vision.
  Another benefit of this model is that it can effectively train faster by skipping overrepresented data.
 ### Cross Entropy loss (baseline)
- penaliz wrong predictions more than right predictions
 
-### Balanced Cross Entropy
+Cross Entropy is a common loss measure for classification in the case of rare events.  It is calculated by generating two distributions: one from the true labels and one from the predicted labels. Kullback-Leibler divergence is used to measure the difference between the two distributions.
 
+Theoretically, Cross Entropy loss should converge faster than MSE in gradient descent.
 
-### Asymmetric Cross Entropy
+### Asymmetric Loss
 
-similar to balanced cross entropy but finer details. Asymmetric Loss refers to a class of loss functions where loss is calculated differently based on both the class as well as the correct vs incorrect classification. In cases where costs are unique, this can be easily reflected in the loss function. In our case, since costs are associated more with missclassification of fraud as real, this has higher weight than the others.
+Asymmetric Loss refers to a class of loss functions where loss is calculated differently based on both the class as well as the correct vs incorrect classification. In cases where costs are unique, this can be easily reflected in the loss function. In our case, since costs are associated more with missclassification of fraud as real, this has higher weight than the others.
 
-In essence, imbalanced learning involves accomodating different costs of misclassification. Since these costs are context specific, we also investigate approaches specific to our domain of application. Specifically we use two asymmetric loss functions: one which weights Type II error higher , and one which uses the amount in the transaction as a weight for the Type II error cost.
-
-
-### Balanced Cross Entropy 
-
-(class weights, we use inverse class frequency)
-
-provide class weights, so that misclassification and classification of one class is more important than the other.
-
-
-### Asymmetric Loss for Cross Entropy
-
-  In some applications costs of misclassification may differ. In our case of email fraud this is readily apparent: misclassifying an transation as fraud causes some transactional costs and inconvenience to the consumer, but misclassifying a fraudulent transaction as real can cost the consumer or the credit card company thousands of dollars. For this reason, it seems prurient to consider a case where the amount is a function of our missclassification cost.
+In some applications costs of misclassification may differ. In our case of email fraud this is readily apparent: misclassifying a transation as fraud causes some transactional costs and inconvenience to the consumer, but misclassifying a fraudulent transaction as real can cost the credit card company thousands of dollars. We use an asymmetric loss function where false negatives are weighted more than false positives to reflect this real world cost.
  
-  $$ E[classify as fraud | not fraud ] < $$ E[classify as real | fraud] $$
+E[classify as fraud | not fraud ] < $$ E[classify as real | fraud]
+
+We assign loss for false negatives to be 4 times higher than the other classifications.
+
 ### Cross Entropy with Monetary Weights
 
+This loss function focuses on the specific application to fraud detection. Because costs of Type II error (false negative) are directly related to the size of the transaction, we use relative cost as a weight on each observation. The variable 'Amount' is standardized such that all values are between 0 and 1.
+
 ### Focal Loss with Monetary Weights
+
+We repeat the same weighting scheme as was applied for cross entrop, with the focal loss function.
 
 
 ### SMOTE
@@ -113,9 +112,14 @@ description of AUC and why its useful
 
 descrip + why useful
 
+![equation](pics/text/prec.gif)
+
+![equation](pics/text/recall.gif)
+
 #####Speed & Convergence
 
-desc and why useful
+When choosing a model, the speed of the algorithm is important for real applications. Convergence of the algorithm is also important for trustworthy results.
+
 
 ![speed](pics/speed.png)
 
