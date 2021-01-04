@@ -112,9 +112,9 @@ description of AUC and why its useful
 
 descrip + why useful
 
-![equation](pics/text/prec.gif)
+![equation](pics/tex/prec.gif)
 
-![equation](pics/text/recall.gif)
+![equation](pics/tex/recall.gif)
 
 #####Speed & Convergence
 
