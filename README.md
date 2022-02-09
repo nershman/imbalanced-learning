@@ -123,7 +123,7 @@ Since we have an extremely imbalanced data, accuracy is no longer a helpful metr
 * ROC-AUC
 * Speed & Convergence Rate
 
-##### ROC-AUC ( Receiver Operating Characteristicss Aread Under Curve)
+##### ROC-AUC ( Receiver Operating Characteristics Area Under Curve)
 
 We use the area under Receiver Operating Characteristics curve to examine the performance of our models in the general case. The AUC plots the True Positive Rate and False Positive Rate, determining their relationship. The ideal model will be a constant of TPR = 1, for all FPR.
 
